@@ -55,6 +55,8 @@
     <line x1="1088" y1="0" x2="1088" y2="240"/><line x1="1152" y1="0" x2="1152" y2="240"/>
     <line x1="1216" y1="0" x2="1216" y2="240"/>
   </g>
+
+  <!-- Border frame -->
   <rect x="20" y="20" width="1240" height="200" fill="none" stroke="#3c70b0" stroke-width="2"/>
   <line x1="20" y1="20" x2="50" y2="20" stroke="#5a9cf0" stroke-width="2"/>
   <line x1="20" y1="20" x2="20" y2="50" stroke="#5a9cf0" stroke-width="2"/>
@@ -70,7 +72,7 @@
   <text x="35" y="55" font-family="monospace" font-size="10" fill="#8ab4f8">PRIVACY-FIRST AI BACKEND  |  LOCAL LLM INFERENCE</text>
   <text x="35" y="68" font-family="monospace" font-size="10" fill="#8ab4f8">STATUS: OPERATIONAL  |  UPTIME: 99.97%</text>
 
-  <!-- Lego brick -->
+  <!-- Lego brick logo -->
   <g transform="translate(55, 95)">
     <rect x="4" y="4" width="100" height="65" rx="4" fill="#781818"/>
     <rect x="0" y="2" width="100" height="65" rx="4" fill="#c82828" stroke="#a02020" stroke-width="2"/>
@@ -86,6 +88,8 @@
     <ellipse cx="75" cy="-6" rx="4" ry="2" fill="#ff9090"/>
     <text x="50" y="46" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="34" font-weight="900" fill="#f0c814" text-anchor="middle">K</text>
   </g>
+
+  <!-- Brand text -->
   <text x="190" y="130" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="46" font-weight="700" fill="#d4e4fa">KeepAI</text>
   <text x="190" y="158" font-family="Helvetica Neue, Helvetica, Arial, sans-serif" font-size="19" fill="#8ab4f8">Your private AI backend. Run LLMs locally. Own your data.</text>
 
@@ -103,23 +107,13 @@
   <circle cx="630" cy="200" r="3" fill="#5a9cf0"/>
   <text x="642" y="203" font-family="monospace" font-size="10" fill="#8ab4f8">DOCKER</text>
 
-  <!-- ============ SERVICE LOGS TERMINAL ============ -->
-  <rect x="35" y="200" width="1210" height="0" fill="none"/>
-</svg>
-
-<!-- Service logs rendered as a separate SVG group -->
-<svg width="1280" height="240" viewBox="0 0 1280 240" xmlns="http://www.w3.org/2000/svg">
-  <!-- Log terminal background -->
-  <rect x="870" y="95" width="375" height="110" rx="6" fill="#050a14"/>
-  <rect x="870" y="95" width="375" height="110" rx="6" fill="none" stroke="#3c70b0" stroke-width="1"/>
-
-  <!-- Log header -->
+  <!-- Service logs terminal -->
+  <rect x="870" y="95" width="375" height="110" rx="6" fill="#050a14" stroke="#3c70b0" stroke-width="1"/>
   <rect x="871" y="96" width="373" height="22" rx="4" fill="#0f1a30"/>
   <text x="882" y="111" font-family="monospace" font-size="10" fill="#64a0dc">SERVICE LOGS</text>
   <circle cx="1218" cy="107" r="4" fill="#50c850"/>
   <text x="1227" y="111" font-family="monospace" font-size="9" fill="#50c850">LIVE</text>
 
-  <!-- Log entries -->
   <text x="878" y="128" font-family="monospace" font-size="9" fill="#607890">10:30:42</text>
   <text x="928" y="128" font-family="monospace" font-size="9" fill="#64c8ff">[INFO]</text>
   <text x="970" y="128" font-family="monospace" font-size="9" fill="#7896b4">server</text>
