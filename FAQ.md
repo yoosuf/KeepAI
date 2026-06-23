@@ -119,4 +119,4 @@ Passwords are bcrypt-hashed. There's no password recovery built in — use the `
 
 ---
 
-*Still have questions? Open a [GitHub Issue](https://github.com/yoosuf/fastapi-ollama-backend/issues).*
+*Still have questions? Open a [GitHub Issue](https://github.com/yoosuf/KeepAI/issues).*

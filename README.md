@@ -1,7 +1,6 @@
 <div align="center">
-  <h1>KeepAI</h1>
-  <p><strong>Your private AI backend. Run LLMs locally. Own your data.</strong></p>
-
+  <img src=".github/banner.svg" alt="KeepAI Banner" width="100%">
+  <br>
   <p>
     <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/python-3.11+-blue.svg?style=flat&logo=python&logoColor=white" alt="Python"></a>
     <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/FastAPI-0.104-009688?style=flat&logo=fastapi&logoColor=white" alt="FastAPI"></a>
@@ -9,9 +8,9 @@
     <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-15-4169E1?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL"></a>
     <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker&logoColor=white" alt="Docker"></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green.svg?style=flat" alt="License"></a>
-    <a href="https://github.com/yoosuf/fastapi-ollama-backend/actions"><img src="https://img.shields.io/github/actions/workflow/status/yoosuf/fastapi-ollama-backend/ci.yml?style=flat&logo=githubactions&logoColor=white" alt="CI"></a>
-    <a href="https://github.com/yoosuf/fastapi-ollama-backend/stargazers"><img src="https://img.shields.io/github/stars/yoosuf/fastapi-ollama-backend?style=flat&logo=github&logoColor=white" alt="Stars"></a>
-    <a href="https://github.com/yoosuf/fastapi-ollama-backend/issues"><img src="https://img.shields.io/github/issues/yoosuf/fastapi-ollama-backend?style=flat&logo=github&logoColor=white" alt="Issues"></a>
+    <a href="https://github.com/yoosuf/KeepAI/actions"><img src="https://img.shields.io/github/actions/workflow/status/yoosuf/KeepAI/ci.yml?style=flat&logo=githubactions&logoColor=white" alt="CI"></a>
+    <a href="https://github.com/yoosuf/KeepAI/stargazers"><img src="https://img.shields.io/github/stars/yoosuf/KeepAI?style=flat&logo=github&logoColor=white" alt="Stars"></a>
+    <a href="https://github.com/yoosuf/KeepAI/issues"><img src="https://img.shields.io/github/issues/yoosuf/KeepAI?style=flat&logo=github&logoColor=white" alt="Issues"></a>
   </p>
 
   <h3>
@@ -80,7 +79,7 @@ Every AI SaaS sends your data to someone else's server. Not this one.
 ### One-liner (Docker)
 
 ```bash
-git clone https://github.com/yoosuf/fastapi-ollama-backend.git
+git clone https://github.com/yoosuf/KeepAI.git
 cd fastapi-ollama-backend
 docker compose up --build -d
 docker compose exec ollama ollama pull llama3
@@ -91,7 +90,7 @@ That's it. Your AI backend runs at **`http://localhost:8000`** with Swagger docs
 ### Or without Docker
 
 ```bash
-git clone https://github.com/yoosuf/fastapi-ollama-backend.git
+git clone https://github.com/yoosuf/KeepAI.git
 cd fastapi-ollama-backend
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
@@ -219,7 +218,7 @@ Each layer is independently testable and swappable. Swap Ollama for OpenAI, Anth
 We love contributions! Check out our [Contributing Guidelines](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md).
 
 **Ways to contribute:**
-- 🐛 Report bugs via [GitHub Issues](https://github.com/yoosuf/fastapi-ollama-backend/issues)
+- 🐛 Report bugs via [GitHub Issues](https://github.com/yoosuf/KeepAI/issues)
 - 💡 Suggest features
 - 📝 Improve documentation
 - 🔧 Submit pull requests
@@ -249,7 +248,7 @@ Distributed under the **MIT License**. See [LICENSE](LICENSE) for details.
 
 **Yoosuf Mohamed** — [mayoosuf@gmail.com](mailto:mayoosuf@gmail.com)
 
-Project Link: [https://github.com/yoosuf/fastapi-ollama-backend](https://github.com/yoosuf/fastapi-ollama-backend)
+Project Link: [https://github.com/yoosuf/KeepAI](https://github.com/yoosuf/KeepAI)
 
 ---
 

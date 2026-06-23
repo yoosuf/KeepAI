@@ -103,7 +103,7 @@ KeepAI is under active development. This document outlines planned features and 
 This roadmap is community-driven. To prioritize features:
 
 1. **Upvote** 👍 existing issues on GitHub
-2. **Submit** feature requests via [GitHub Issues](https://github.com/yoosuf/fastapi-ollama-backend/issues/new/choose)
+2. **Submit** feature requests via [GitHub Issues](https://github.com/yoosuf/KeepAI/issues/new/choose)
 3. **Contribute** — PRs are always welcome!
 
 ---

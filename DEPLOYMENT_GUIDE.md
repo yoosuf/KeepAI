@@ -74,7 +74,7 @@ openssl rand -hex 32
 
 ```bash
 # Clone the repository
-git clone https://github.com/yoosuf/fastapi-ollama-backend.git
+git clone https://github.com/yoosuf/KeepAI.git
 cd fastapi-ollama-backend
 
 # Configure environment
@@ -187,7 +187,7 @@ CREATE DATABASE app_production OWNER app_user;
 
 ```bash
 # Clone and install
-git clone https://github.com/yoosuf/fastapi-ollama-backend.git
+git clone https://github.com/yoosuf/KeepAI.git
 cd fastapi-ollama-backend
 python -m venv venv
 source venv/bin/activate

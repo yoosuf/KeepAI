@@ -247,7 +247,7 @@ Tests use mocks/dummy environment variables. If tests fail with DB errors:
 
 ## Still Stuck?
 
-1. **Search existing issues** — [GitHub Issues](https://github.com/yoosuf/fastapi-ollama-backend/issues)
+1. **Search existing issues** — [GitHub Issues](https://github.com/yoosuf/KeepAI/issues)
 2. **Open a new issue** — Include:
    - Steps to reproduce
    - Full error logs

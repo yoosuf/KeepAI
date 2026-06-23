@@ -171,7 +171,7 @@ Example: `feat: add streaming response support`
 
 ## Reporting Bugs
 
-Bugs are tracked as [GitHub Issues](https://github.com/yoosuf/fastapi-ollama-backend/issues).
+Bugs are tracked as [GitHub Issues](https://github.com/yoosuf/KeepAI/issues).
 
 Before submitting:
 1. Check if the bug has already been reported
