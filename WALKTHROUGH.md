@@ -1,4 +1,4 @@
-# Walkthrough: FastAPI + Ollama Backend
+# Walkthrough: KeepAPI
 
 I have successfully built the complete backend application with Authentication, Accounting, and a fully database-driven Role-Based Access Control (RBAC) system.
 
