@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>KeepAPI</h1>
+  <h1>KeepAI</h1>
   <p><strong>Your private AI backend. Run LLMs locally. Own your data.</strong></p>
 
   <p>
@@ -39,17 +39,17 @@
 
 ---
 
-## Why KeepAPI?
+## Why KeepAI?
 
 Every AI SaaS sends your data to someone else's server. Not this one.
 
-**KeepAPI** is a privacy-first, production-ready backend that runs large language models (Llama 3, Mistral, CodeLlama, etc.) **on your own infrastructure** — no cloud dependency, no data leaks, no API usage fees.
+**KeepAI** is a privacy-first, production-ready backend that runs large language models (Llama 3, Mistral, CodeLlama, etc.) **on your own infrastructure** — no cloud dependency, no data leaks, no API usage fees.
 
 > "The best AI is the one that respects your privacy."
 
 ### 🏆 What Makes It Different
 
-| Feature | KeepAPI | OpenAI API | Other Backends |
+| Feature | KeepAI | OpenAI API | Other Backends |
 |---|---|---|---|
 | **Data Privacy** | 🔒 100% local | ❌ Data leaves your infra | ❌ Usually cloud |
 | **Cost** | 💰 Free (your hardware) | 💸 Per-token billing | 💸 SaaS fees |
@@ -170,7 +170,7 @@ Deploy behind your firewall with role-based access for different teams.
 
 ```
 ┌─────────────────────┐
-│     KeepAPI App      │
+│     KeepAI App      │
 │  Router → Service    │
 │     → Interface      │
 │        ↓             │

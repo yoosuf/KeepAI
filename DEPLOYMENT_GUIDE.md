@@ -1,6 +1,6 @@
 # Deployment Guide
 
-This guide covers deploying KeepAPI to production environments.
+This guide covers deploying KeepAI to production environments.
 
 ## Table of Contents
 

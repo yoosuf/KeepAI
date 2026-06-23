@@ -1,6 +1,6 @@
 # Architecture
 
-KeepAPI follows **Clean Architecture** principles (also known as Hexagonal Architecture or Ports and Adapters).
+KeepAI follows **Clean Architecture** principles (also known as Hexagonal Architecture or Ports and Adapters).
 
 ---
 
@@ -136,7 +136,7 @@ Pydantic settings loaded from environment variables / `.env` file:
 
 ```python
 class Settings(BaseSettings):
-    PROJECT_NAME: str = "KeepAPI"
+    PROJECT_NAME: str = "KeepAI"
     VERSION: str = "1.0.0"
     API_V1_STR: str = "/api/v1"
     POSTGRES_USER: str

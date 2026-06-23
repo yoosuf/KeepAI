@@ -1,6 +1,6 @@
 # API Documentation
 
-KeepAPI exposes a REST API at `/api/v1`. Live interactive documentation is available at `/docs` (Swagger) and `/redoc` (ReDoc) when the server is running.
+KeepAI exposes a REST API at `/api/v1`. Live interactive documentation is available at `/docs` (Swagger) and `/redoc` (ReDoc) when the server is running.
 
 ## Base URL
 

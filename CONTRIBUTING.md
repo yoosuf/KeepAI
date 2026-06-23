@@ -1,4 +1,4 @@
-# Contributing to KeepAPI
+# Contributing to KeepAI
 
 First off, thanks for taking the time to contribute! 🎉
 

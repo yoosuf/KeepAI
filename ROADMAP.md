@@ -1,6 +1,6 @@
 # Roadmap
 
-KeepAPI is under active development. This document outlines planned features and improvements.
+KeepAI is under active development. This document outlines planned features and improvements.
 
 ## Legend
 
