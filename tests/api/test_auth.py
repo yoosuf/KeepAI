@@ -62,10 +62,11 @@ async def test_register_user_success(client, mock_db_session):
 @pytest.mark.asyncio
 async def test_login_success(client, mock_db_session):
     # Mock User
+    argon2_hash = "$argon2id$v=19$m=65536,t=3,p=4$SmCIiixYVIBABP7DSD8czw$BRw+VvIPraEbmAKydRTGSbPJ5/cm4p1YBuTymM9McDo"
     user_obj = User(
         id=1,
         email="test@example.com",
-        hashed_password="$argon2id$v=19$m=65536,t=3,p=4$SmCIiixYVIBABP7DSD8czw$BRw+VvIPraEbmAKydRTGSbPJ5/cm4p1YBuTymM9McDo",  # "secret"
+        hashed_password=argon2_hash,  # "secret"
         is_active=True,
     )
 
