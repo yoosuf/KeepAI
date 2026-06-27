@@ -115,7 +115,7 @@ Check the application logs: `docker compose logs backend`. Common causes: Ollama
 Ensure the model is pulled: `docker compose exec ollama ollama list`. If empty, pull a model: `docker compose exec ollama ollama pull llama3`.
 
 ### Passwords aren't working
-Passwords are bcrypt-hashed. There's no password recovery built in — use the `/api/v1/auth/register` endpoint to create a new account.
+Passwords are Argon2id-hashed. There's no password recovery built in — use the `/api/v1/auth/register` endpoint to create a new account.
 
 ---
 

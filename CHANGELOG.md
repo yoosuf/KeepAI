@@ -27,7 +27,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Security
 
-- bcrypt password hashing
+- Argon2id password hashing
 - JWT token expiry (30 min default)
 - Non-root user in Docker container
 - Environment-based configuration via pydantic-settings

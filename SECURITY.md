@@ -46,7 +46,7 @@ You should receive a response within **48 hours**. If not, please follow up.
 
 ### Authentication
 - JWT tokens expire after 30 minutes by default
-- bcrypt is used for password hashing
+- Argon2id is used for password hashing
 - Passwords are never logged or returned in responses
 - Use HTTPS in production (reverse proxy with Caddy/Nginx)
 

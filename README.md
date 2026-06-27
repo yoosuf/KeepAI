@@ -231,7 +231,7 @@ Found a vulnerability? Please read our [Security Policy](SECURITY.md) for report
 
 **Key security features:**
 - JWT tokens with configurable expiry
-- bcrypt password hashing
+- Argon2id password hashing
 - Database-driven RBAC
 - No cloud dependencies — your data stays yours
 - Non-root user in Docker

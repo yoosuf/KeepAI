@@ -107,7 +107,7 @@ src/modules/{feature}/
 | Models | `models.py` | `User`, `Role`, `Permission`, `role_permissions` tables |
 | Schemas | `schemas.py` | Registration/login request/response schemas |
 | Service | `service.py` | User creation, credential verification |
-| Utils | `utils.py` | Password hashing (bcrypt), JWT creation/verification |
+| Utils | `utils.py` | Password hashing (Argon2id), JWT creation/verification |
 | Router | `router.py` | `/register`, `/login` endpoints |
 
 ### Prompts Module
@@ -176,7 +176,7 @@ Concrete adapter implementing `LLMInterface`. Calls Ollama's `/api/generate` via
 
 ### Flow
 
-1. **Register** → Email + password → bcrypt hash → stored in `users` table
+1. **Register** → Email + password → Argon2id hash → stored in `users` table
 2. **Login** → Email + password → verify hash → issue JWT (30 min expiry)
 3. **Request** → JWT in `Authorization` header → decode → extract user → inject as dependency
 
