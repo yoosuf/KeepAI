@@ -65,7 +65,7 @@ async def test_login_success(client, mock_db_session):
     user_obj = User(
         id=1,
         email="test@example.com",
-        hashed_password="$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",  # "secret"
+        hashed_password="$argon2id$v=19$m=65536,t=3,p=4$SmCIiixYVIBABP7DSD8czw$BRw+VvIPraEbmAKydRTGSbPJ5/cm4p1YBuTymM9McDo",  # "secret"
         is_active=True,
     )
 
