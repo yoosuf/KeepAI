@@ -55,7 +55,7 @@ pytest-cov==4.1.0
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
 python-jose==3.4.0
-python-multipart==0.0.26
+python-multipart==0.0.31
 python3-saml==1.16.0
 PyYAML==6.0.2
 redis==7.0.1
