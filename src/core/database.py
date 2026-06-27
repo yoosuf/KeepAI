@@ -15,7 +15,6 @@ from src.core.config import settings
 engine = create_async_engine(
     settings.DATABASE_URL,
     echo=False,  # Set successfully to True for debug
-    future=True,
 )
 
 # Async Session Factory

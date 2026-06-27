@@ -8,12 +8,13 @@ os.environ["POSTGRES_DB"] = "test_db"
 os.environ["SECRET_KEY"] = "test_secret"
 
 import pytest
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 
 from src.main import app
 
 
 @pytest.fixture
 async def client():
-    async with AsyncClient(app=app, base_url="http://test") as ac:
+    transport = ASGITransport(app=app)
+    async with AsyncClient(transport=transport, base_url="http://test") as ac:
         yield ac
