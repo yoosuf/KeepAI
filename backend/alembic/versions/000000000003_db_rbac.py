@@ -6,7 +6,7 @@ Create Date: 2026-01-19 12:30:00.000000
 
 """
 import sqlalchemy as sa
-from sqlalchemy import Integer, String
+from sqlalchemy import Integer, String, text
 from sqlalchemy.sql import column, table
 
 from alembic import op
@@ -43,15 +43,17 @@ def upgrade() -> None:
     # 3. Create Association Table
     op.create_table(
         "role_permissions",
-        sa.Column("role_id", sa.Integer(), nullable=True),
-        sa.Column("permission_id", sa.Integer(), nullable=True),
+        sa.Column("role_id", sa.Integer(), nullable=False),
+        sa.Column("permission_id", sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(
             ["permission_id"],
             ["permissions.id"],
+            ondelete="CASCADE",
         ),
         sa.ForeignKeyConstraint(
             ["role_id"],
             ["roles.id"],
+            ondelete="CASCADE",
         ),
     )
 
@@ -60,60 +62,46 @@ def upgrade() -> None:
     op.drop_column("users", "role")
     # Add new 'role_id' column
     op.add_column("users", sa.Column("role_id", sa.Integer(), nullable=True))
-    op.create_foreign_key(None, "users", "roles", ["role_id"], ["id"])
+    op.create_foreign_key(None, "users", "roles", ["role_id"], ["id"], ondelete="SET NULL")
 
     # 5. Seed Data (Data Migration)
-    # Define temp tables for insertion
-    permissions = table(
-        "permissions", column("name", String), column("description", String)
-    )
-    roles = table("roles", column("name", String))
-    role_permissions = table(
-        "role_permissions", column("role_id", Integer), column("permission_id", Integer)
-    )
+    conn = op.get_bind()
 
-    # Insert Permissions
-    op.bulk_insert(
-        permissions,
+    conn.execute(
+        text("INSERT INTO permissions (name, description) VALUES (:name, :desc)"),
         [
-            {"name": "users:read", "description": "View all users"},
-            {"name": "prompts:read_all", "description": "View all prompts"},
-            {"name": "prompts:create", "description": "Create prompts"},
+            {"name": "users:read", "desc": "View all users"},
+            {"name": "prompts:read_all", "desc": "View all prompts"},
+            {"name": "prompts:create", "desc": "Create prompts"},
         ],
     )
 
-    # Insert Roles
-    op.bulk_insert(
-        roles,
+    conn.execute(
+        text("INSERT INTO roles (name) VALUES (:name)"),
         [
             {"name": "admin"},
             {"name": "user"},
         ],
     )
 
-    # Need to map IDs to link them...
-    # For simplicity in this script, we assume auto-increment gives admin=1, user=2.
-    # In a strict prod env, we'd query first.
-
-    # Permission IDs (assumed): 1=users:read, 2=prompts:read_all, 3=prompts:create
-    # Role IDs (assumed): 1=admin, 2=user
-
-    # Admin gets everything
-    op.bulk_insert(
-        role_permissions,
-        [
-            {"role_id": 1, "permission_id": 1},
-            {"role_id": 1, "permission_id": 2},
-            {"role_id": 1, "permission_id": 3},
-        ],
+    # Admin gets everything — query actual IDs to avoid auto-increment assumptions
+    conn.execute(
+        text("""
+            INSERT INTO role_permissions (role_id, permission_id)
+            SELECT r.id, p.id
+            FROM roles r, permissions p
+            WHERE r.name = 'admin' AND p.name IN ('users:read', 'prompts:read_all', 'prompts:create')
+        """)
     )
 
     # User gets create prompt
-    op.bulk_insert(
-        role_permissions,
-        [
-            {"role_id": 2, "permission_id": 3},
-        ],
+    conn.execute(
+        text("""
+            INSERT INTO role_permissions (role_id, permission_id)
+            SELECT r.id, p.id
+            FROM roles r, permissions p
+            WHERE r.name = 'user' AND p.name = 'prompts:create'
+        """)
     )
 
 

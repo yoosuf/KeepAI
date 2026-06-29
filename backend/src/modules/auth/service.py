@@ -1,3 +1,4 @@
+import asyncio
 import time
 from datetime import timedelta
 from typing import Optional
@@ -19,29 +20,31 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_V1_STR}/auth/login
 
 # Permission cache: user_id -> (User with permissions loaded, timestamp)
 _perm_cache: dict[int, tuple[User, float]] = {}
+_perm_cache_lock = asyncio.Lock()
 _PERM_CACHE_TTL = 300  # 5 minutes
 
 
-def _get_cached_permissions(user_id: int) -> Optional[User]:
-    entry = _perm_cache.get(user_id)
-    if entry and (time.monotonic() - entry[1]) < _PERM_CACHE_TTL:
-        return entry[0]
-    # Evict expired entry
-    _perm_cache.pop(user_id, None)
+async def _get_cached_permissions(user_id: int) -> Optional[User]:
+    async with _perm_cache_lock:
+        entry = _perm_cache.get(user_id)
+        if entry and (time.monotonic() - entry[1]) < _PERM_CACHE_TTL:
+            return entry[0]
+        _perm_cache.pop(user_id, None)
     return None
 
 
-def _cache_permissions(user: User) -> None:
-    # Evict entries beyond a reasonable cap to bound memory usage
-    if len(_perm_cache) >= 5000:
-        oldest_key = min(_perm_cache, key=lambda k: _perm_cache[k][1])
-        _perm_cache.pop(oldest_key, None)
-    _perm_cache[user.id] = (user, time.monotonic())
+async def _cache_permissions(user: User) -> None:
+    async with _perm_cache_lock:
+        if len(_perm_cache) >= 5000:
+            oldest_key = min(_perm_cache, key=lambda k: _perm_cache[k][1])
+            _perm_cache.pop(oldest_key, None)
+        _perm_cache[user.id] = (user, time.monotonic())
 
 
-def invalidate_permission_cache(user_id: int) -> None:
+async def invalidate_permission_cache(user_id: int) -> None:
     """Call this whenever a user's role or permissions change."""
-    _perm_cache.pop(user_id, None)
+    async with _perm_cache_lock:
+        _perm_cache.pop(user_id, None)
 
 
 async def register_new_user(user_in: UserCreate, db: AsyncSession) -> User:
@@ -69,7 +72,7 @@ async def authenticate_user(form_data, db: AsyncSession) -> Token:
     result = await db.execute(stmt)
     user = result.scalars().first()
 
-    if not user or not verify_password(form_data.password, user.hashed_password):
+    if not user or not user.is_active or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
@@ -77,7 +80,7 @@ async def authenticate_user(form_data, db: AsyncSession) -> Token:
         )
 
     access_token = create_access_token(
-        data={"sub": user.email},
+        data={"sub": user.email, "user_id": user.id},
         expires_delta=timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES),
     )
     return Token(access_token=access_token, token_type="bearer")
@@ -101,7 +104,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
     query = select(User).where(User.email == token_data.email)
     result = await db.execute(query)
     user = result.scalars().first()
-    if user is None:
+    if user is None or not user.is_active:
         raise credentials_exception
     return user
 
@@ -109,7 +112,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
 async def get_current_user_with_permissions(
     user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)
 ) -> User:
-    cached = _get_cached_permissions(user.id)
+    cached = await _get_cached_permissions(user.id)
     if cached:
         return cached
 
@@ -117,7 +120,7 @@ async def get_current_user_with_permissions(
     result = await db.execute(query)
     user_with_perms = result.scalars().first()
 
-    _cache_permissions(user_with_perms)
+    await _cache_permissions(user_with_perms)
     return user_with_perms
 
 

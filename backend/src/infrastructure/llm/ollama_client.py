@@ -14,6 +14,7 @@ logger = logging.getLogger(__name__)
 class OllamaClient(LLMInterface):
     def __init__(self, base_url: str = settings.OLLAMA_BASE_URL):
         self.base_url = base_url
+        self._client = httpx.AsyncClient(timeout=settings.LLM_TIMEOUT_SECONDS)
 
     _OPTION_KEYS = {"temperature", "top_p", "top_k", "num_predict", "seed", "repeat_penalty", "num_ctx"}
 
@@ -31,16 +32,15 @@ class OllamaClient(LLMInterface):
 
         start = time.time()
         try:
-            async with httpx.AsyncClient(timeout=settings.LLM_TIMEOUT_SECONDS) as client:
-                response = await client.post(url, json=payload)
-                response.raise_for_status()
-                data = response.json()
+            response = await self._client.post(url, json=payload)
+            response.raise_for_status()
+            data = response.json()
 
-                return {
-                    "response_text": data.get("response", ""),
-                    "processing_time_ms": int((time.time() - start) * 1000),
-                    "meta_data": {"raw_response": data},
-                }
+            return {
+                "response_text": data.get("response", ""),
+                "processing_time_ms": int((time.time() - start) * 1000),
+                "meta_data": {"raw_response": data},
+            }
         except httpx.HTTPError as e:
             logger.error(f"Ollama API error: {e}")
             raise Exception(f"Failed to communicate with LLM: {e}") from e
@@ -78,22 +78,19 @@ class OllamaClient(LLMInterface):
 
         start = time.time()
         try:
-            async with httpx.AsyncClient(timeout=settings.LLM_TIMEOUT_SECONDS) as client:
-                response = await client.post(url, json=payload)
-                response.raise_for_status()
-                data = response.json()
-                return {
-                    "response_text": data.get("message", {}).get("content", ""),
-                    "processing_time_ms": int((time.time() - start) * 1000),
-                    "meta_data": {"raw_response": data},
-                }
+            response = await self._client.post(url, json=payload)
+            response.raise_for_status()
+            data = response.json()
+            return {
+                "response_text": data.get("message", {}).get("content", ""),
+                "processing_time_ms": int((time.time() - start) * 1000),
+                "meta_data": {"raw_response": data},
+            }
         except httpx.HTTPError as e:
             logger.error(f"Ollama chat error: {e}")
             raise Exception(f"Failed to communicate with LLM: {e}") from e
 
-    async def stream_chat(
-        self, messages: List[Dict[str, str]], model: str, **kwargs
-    ) -> AsyncGenerator[str, None]:
+    async def stream_chat(self, messages: List[Dict[str, str]], model: str, **kwargs) -> AsyncGenerator[str, None]:
         url = f"{self.base_url}/api/chat"
         payload = self._build_payload({"model": model, "messages": messages, "stream": True}, kwargs)
 
@@ -116,3 +113,6 @@ class OllamaClient(LLMInterface):
         except httpx.HTTPError as e:
             logger.error(f"Ollama stream_chat error: {e}")
             raise Exception(f"LLM stream failed: {e}") from e
+
+    async def close(self):
+        await self._client.aclose()

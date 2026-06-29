@@ -23,7 +23,7 @@ def override_db(mock_db_session):
 
 @pytest.mark.asyncio
 async def test_register_user_success(client, mock_db_session):
-    payload = {"email": "newuser@example.com", "password": "password123", "role": "user"}
+    payload = {"email": "newuser@example.com", "password": "Secure1pass", "role": "user"}
 
     # Mocking DB responses
     # 1. Check existing user -> None

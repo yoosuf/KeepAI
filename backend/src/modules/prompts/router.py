@@ -9,7 +9,14 @@ from src.core.database import get_db
 from src.core.rate_limit import limiter
 from src.modules.auth.models import User
 from src.modules.auth.service import get_current_user
-from src.modules.prompts.schemas import InvoiceExtractRequest, PaginatedPromptResponse, PromptCreate, PromptResponse
+from src.modules.prompts.schemas import (
+    ChatRequest,
+    ChatResponse,
+    InvoiceExtractRequest,
+    PaginatedPromptResponse,
+    PromptCreate,
+    PromptResponse,
+)
 from src.modules.prompts.service import PromptService
 
 router = APIRouter()
@@ -17,6 +24,19 @@ router = APIRouter()
 
 def get_prompt_service(request: Request, db: AsyncSession = Depends(get_db)) -> PromptService:
     return PromptService(db, request.app.state.llm_client)
+
+
+def _build_llm_kwargs(body) -> dict:
+    kwargs: dict = {}
+    if body.system_prompt:
+        kwargs["system"] = body.system_prompt
+    if body.temperature is not None:
+        kwargs["temperature"] = body.temperature
+    if body.top_p is not None:
+        kwargs["top_p"] = body.top_p
+    if body.max_tokens is not None:
+        kwargs["num_predict"] = body.max_tokens
+    return kwargs
 
 
 @router.post("/prompts", response_model=PromptResponse, status_code=status.HTTP_201_CREATED)
@@ -64,15 +84,7 @@ async def stream_prompt(
         or (prompt_in.task_type and settings.MODEL_ROUTING.get(prompt_in.task_type))
         or settings.OLLAMA_MODEL
     )
-    stream_kwargs: dict = {}
-    if prompt_in.system_prompt:
-        stream_kwargs["system"] = prompt_in.system_prompt
-    if prompt_in.temperature is not None:
-        stream_kwargs["temperature"] = prompt_in.temperature
-    if prompt_in.top_p is not None:
-        stream_kwargs["top_p"] = prompt_in.top_p
-    if prompt_in.max_tokens is not None:
-        stream_kwargs["num_predict"] = prompt_in.max_tokens
+    stream_kwargs = _build_llm_kwargs(prompt_in)
 
     async def _event_generator() -> AsyncGenerator[str, None]:
         try:
@@ -110,6 +122,64 @@ async def get_prompt(
     if not prompt:
         raise HTTPException(status_code=404, detail="Prompt not found")
     return prompt
+
+
+@router.post("/chat", response_model=ChatResponse)
+@limiter.limit(settings.RATE_LIMIT_LLM)
+async def chat(
+    request: Request,
+    body: ChatRequest,
+    service: PromptService = Depends(get_prompt_service),
+    current_user: User = Depends(get_current_user),
+):
+    """Multi-turn chat with conversation history. Takes a list of messages and returns a single response."""
+    resolved_model = body.model_name or settings.OLLAMA_MODEL
+
+    messages = [m.model_dump() for m in body.messages]
+    if body.system_prompt:
+        messages.insert(0, {"role": "system", "content": body.system_prompt})
+
+    stream_kwargs = _build_llm_kwargs(body)
+    try:
+        result = await service.llm_client.chat(messages=messages, model=resolved_model, **stream_kwargs)
+        return ChatResponse(
+            response_text=result["response_text"],
+            processing_time_ms=result["processing_time_ms"],
+            model_name=resolved_model,
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Chat failed: {e}",
+        ) from e
+
+
+@router.post("/chat/stream", status_code=status.HTTP_200_OK)
+@limiter.limit(settings.RATE_LIMIT_LLM)
+async def chat_stream(
+    request: Request,
+    body: ChatRequest,
+    service: PromptService = Depends(get_prompt_service),
+    current_user: User = Depends(get_current_user),
+):
+    """Stream multi-turn chat tokens via Server-Sent Events."""
+    resolved_model = body.model_name or settings.OLLAMA_MODEL
+
+    messages = [m.model_dump() for m in body.messages]
+    if body.system_prompt:
+        messages.insert(0, {"role": "system", "content": body.system_prompt})
+
+    stream_kwargs = _build_llm_kwargs(body)
+
+    async def _event_generator() -> AsyncGenerator[str, None]:
+        try:
+            async for token in service.llm_client.stream_chat(messages=messages, model=resolved_model, **stream_kwargs):
+                yield f"data: {token}\n\n"
+            yield "data: [DONE]\n\n"
+        except Exception as e:
+            yield f"data: [ERROR] {e}\n\n"
+
+    return StreamingResponse(_event_generator(), media_type="text/event-stream")
 
 
 @router.post("/extract-invoice", status_code=status.HTTP_200_OK)

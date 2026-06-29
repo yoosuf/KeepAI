@@ -1,9 +1,9 @@
 from datetime import datetime, timedelta, timezone
-from typing import Union
+from typing import Any, Dict, Union
 
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from jose import jwt
+from jose import JWTError, jwt
 
 from src.core.config import settings
 
@@ -19,6 +19,14 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 def get_password_hash(password: str) -> str:
     return ph.hash(password)
+
+
+def decode_token(token: str) -> Dict[str, Any]:
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        return payload
+    except JWTError:
+        raise ValueError("Invalid token") from None
 
 
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None) -> str:

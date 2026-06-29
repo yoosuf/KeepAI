@@ -31,9 +31,7 @@ class LLMInterface(ABC):
         """
 
     @abstractmethod
-    async def stream_chat(
-        self, messages: List[Dict[str, str]], model: str, **kwargs
-    ) -> AsyncGenerator[str, None]:
+    async def stream_chat(self, messages: List[Dict[str, str]], model: str, **kwargs) -> AsyncGenerator[str, None]:
         """
         Stream tokens for a multi-turn chat.
 

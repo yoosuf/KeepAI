@@ -18,7 +18,7 @@ class Prompt(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(
-        Integer, ForeignKey("users.id"), nullable=True
+        Integer, ForeignKey("users.id", ondelete="SET NULL"), index=True, nullable=True
     )  # Make nullable for now to support old records or optional auth
 
     prompt_text = Column(Text, nullable=False)

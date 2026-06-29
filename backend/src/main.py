@@ -4,10 +4,11 @@ from contextlib import asynccontextmanager
 import httpx
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.requests import Request as StarletteRequest
+from starlette.responses import JSONResponse
 
 from src.core.config import settings
 from src.core.database import engine, get_db
@@ -16,9 +17,14 @@ from src.core.middleware import RequestIDMiddleware
 from src.core.rate_limit import limiter
 from src.infrastructure.llm.ollama_client import OllamaClient
 from src.modules.admin import router as admin_router
+from src.modules.analytics import router as analytics_router
+from src.modules.api_keys import router as api_keys_router
 from src.modules.auth import router as auth_router
+from src.modules.conversations import router as conversations_router
+from src.modules.documents import router as documents_router
 from src.modules.models import router as models_router
 from src.modules.prompts import router as prompts_router
+from src.modules.ws import router as ws_router
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +40,7 @@ async def lifespan(app: FastAPI):
     yield
 
     logger.info("Shutting down...")
+    await app.state.llm_client.close()
     await engine.dispose()  # drain DB pool gracefully
 
 
@@ -41,7 +48,13 @@ app = FastAPI(title=settings.PROJECT_NAME, version=settings.VERSION, lifespan=li
 
 # Rate limiter
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+
+async def rate_limit_handler(request: StarletteRequest, exc: RateLimitExceeded) -> JSONResponse:
+    return JSONResponse(status_code=429, content={"detail": "Rate limit exceeded. Please slow down."})
+
+
+app.add_exception_handler(RateLimitExceeded, rate_limit_handler)
 
 # Middleware (outermost registered last, executes first)
 app.add_middleware(
@@ -58,6 +71,11 @@ app.include_router(auth_router.router, prefix=f"{settings.API_V1_STR}/auth", tag
 app.include_router(admin_router.router, prefix=f"{settings.API_V1_STR}/admin", tags=["admin"])
 app.include_router(models_router.router, prefix=f"{settings.API_V1_STR}/models", tags=["models"])
 app.include_router(prompts_router.router, prefix=f"{settings.API_V1_STR}", tags=["prompts"])
+app.include_router(conversations_router.router, prefix=f"{settings.API_V1_STR}", tags=["conversations"])
+app.include_router(api_keys_router.router, prefix=f"{settings.API_V1_STR}", tags=["api-keys"])
+app.include_router(analytics_router.router, prefix=f"{settings.API_V1_STR}", tags=["analytics"])
+app.include_router(documents_router.router, prefix=f"{settings.API_V1_STR}", tags=["documents"])
+app.include_router(ws_router.router, prefix="", tags=["websocket"])
 
 
 @app.get("/health/live", tags=["health"])
@@ -92,4 +110,11 @@ async def readiness(db: AsyncSession = Depends(get_db)):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("src.main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run(
+        "src.main:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=settings.DEV_MODE,
+        loop="uvloop",
+        http="httptools",
+    )

@@ -67,4 +67,7 @@ celerybeat.pid
 *.sage.py
 
 # Docker
-.dockerignore
+# .dockerignore is tracked — it's project-wide now
+
+
+node_modules

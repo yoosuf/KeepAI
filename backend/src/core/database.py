@@ -21,6 +21,10 @@ AsyncSessionLocal = async_sessionmaker(
     expire_on_commit=False,
     autoflush=False,
 )
+# Note: expire_on_commit=False means ORM objects remain usable after commit
+# without being refreshed from DB. This avoids lazy-load errors after commit
+# but can lead to stale reads if another request modifies the same row.
+# The trade-off is acceptable for this application's read patterns.
 
 
 class Base(DeclarativeBase):

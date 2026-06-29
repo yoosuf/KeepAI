@@ -14,8 +14,8 @@ from src.core.database import Base
 role_permissions = Table(
     "role_permissions",
     Base.metadata,
-    Column("role_id", Integer, ForeignKey("roles.id")),
-    Column("permission_id", Integer, ForeignKey("permissions.id")),
+    Column("role_id", Integer, ForeignKey("roles.id", ondelete="CASCADE"), nullable=False),
+    Column("permission_id", Integer, ForeignKey("permissions.id", ondelete="CASCADE"), nullable=False),
 )
 
 
@@ -26,6 +26,8 @@ class Permission(Base):
     name = Column(String, unique=True, index=True, nullable=False)  # e.g., "user:read", "prompt:create"
     description = Column(String, nullable=True)
 
+    roles = relationship("Role", secondary=role_permissions, back_populates="permissions")
+
 
 class Role(Base):
     __tablename__ = "roles"
@@ -33,7 +35,7 @@ class Role(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True, nullable=False)  # e.g., "admin", "user"
 
-    permissions = relationship("Permission", secondary=role_permissions, backref="roles")
+    permissions = relationship("Permission", secondary=role_permissions, back_populates="roles")
     users = relationship("User", back_populates="role")
 
 
@@ -46,7 +48,7 @@ class User(Base):
     is_active = Column(Boolean, default=True)
 
     # Foreign Key to Role
-    role_id = Column(Integer, ForeignKey("roles.id"), nullable=True)
+    role_id = Column(Integer, ForeignKey("roles.id", ondelete="SET NULL"), nullable=True)
     role = relationship("Role", back_populates="users")
 
     # Use string forward reference to avoid circular import with Prompts module

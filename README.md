@@ -70,8 +70,8 @@ Every AI SaaS sends your data to someone else's server. KeepAI runs entirely on 
 ```bash
 git clone https://github.com/yoosuf/KeepAI.git
 cd KeepAI
-docker compose up --build -d
-docker compose exec ollama ollama pull llama3
+docker compose -f docker/docker-compose.yml up --build -d
+docker compose -f docker/docker-compose.yml exec ollama ollama pull llama3
 ```
 
 API: `http://localhost:8000` · Swagger: `http://localhost:8000/docs`
@@ -82,6 +82,7 @@ API: `http://localhost:8000` · Swagger: `http://localhost:8000/docs`
 git clone https://github.com/yoosuf/KeepAI.git
 cd KeepAI
 python -m venv .venv && source .venv/bin/activate
+cd backend
 pip install -r requirements.txt
 cp .env.example .env          # edit POSTGRES_* and OLLAMA_BASE_URL
 alembic upgrade head
@@ -247,14 +248,17 @@ Completed in v1.0:
 - Connection pooling, rate limiting, permission caching, request tracing
 - Docker Compose, Gunicorn production config, CI
 
+Completed in v1.2:
+- Conversation history, WebSocket chat, React frontend (9 pages)
+- Multi-model routing, API key management, document RAG
+- Usage analytics and audit logging schema
+- Docker files consolidated in docker/ directory
+
 Up next:
-- [ ] Conversation history and persistent chat threads
-- [ ] Web UI (React)
-- [ ] Multi-model routing per request
-- [ ] RAG — document ingestion and semantic search
-- [ ] API key management
-- [ ] Usage analytics
-- [ ] Prometheus metrics
+- [ ] Semantic search (pgvector), context-aware document chat
+- [ ] Redis caching, async task queue
+- [ ] SSO/OAuth, multi-tenant support
+- [ ] Prometheus metrics, Grafana dashboards
 
 [Full roadmap →](docs/community/roadmap.md)
 
@@ -265,11 +269,11 @@ Up next:
 See [Contributing Guide](docs/development/contributing.md) and [Code of Conduct](docs/community/code-of-conduct.md).
 
 ```bash
-# Run tests
-pytest
+# Run tests (from backend/)
+cd backend && python -m pytest
 
-# Lint
-ruff check src/ tests/
+# Lint (from backend/)
+cd backend && ruff check src/ tests/
 ```
 
 PRs welcome — bug fixes, features, and documentation improvements.

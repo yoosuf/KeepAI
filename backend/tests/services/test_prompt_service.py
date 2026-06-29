@@ -47,7 +47,6 @@ async def test_create_prompt_success(prompt_service, mock_llm_client, mock_db):
     assert result.user_id == user_id
 
     # Verify DB interactions
-    mock_db.section.add.assert_not_called()  # AsyncMock structure varies, but we check calls
     assert mock_db.add.called
     assert mock_db.commit.called
     assert mock_db.refresh.called

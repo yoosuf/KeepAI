@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     # Rate limiting (slowapi format: "N/period")
     RATE_LIMIT_LLM: str = "20/minute"
 
+    # Development mode — enables hot reload via uvicorn
+    DEV_MODE: bool = False
+
     model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
 
     @property

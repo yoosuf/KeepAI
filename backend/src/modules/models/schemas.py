@@ -33,9 +33,5 @@ class ModelPullResponse(BaseModel):
     detail: Optional[str] = None
 
 
-class ModelDeleteRequest(BaseModel):
-    name: str = Field(..., description="Model name to delete")
-
-
 class ModelDeleteResponse(BaseModel):
     status: str

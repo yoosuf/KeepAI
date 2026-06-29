@@ -45,13 +45,16 @@ MarkupSafe==3.0.3
 
 # Testing
 pytest==9.1.1
-pytest-asyncio==1.4.0
+pytest-asyncio==0.25.3
 pytest-cov==7.1.0
 coverage==7.14.3
 
 # Rate limiting
 slowapi==0.1.10
 limits==5.8.0
+
+# WebSocket support
+websockets==15.0.1
 
 # Linting / formatting
 ruff==0.15.20
